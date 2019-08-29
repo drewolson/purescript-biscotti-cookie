@@ -7,9 +7,9 @@ import Prelude
 import Control.Alt ((<|>))
 import Data.Array as Array
 import Data.Either (Either(..))
-import Data.Foldable (class Foldable)
+import Data.Foldable (class Foldable, foldl)
+import Data.Function (applyFlipped)
 import Data.Int as Int
-import Data.List (foldr)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import HTTP.Cookie.Formatter (unformatDateTime)
@@ -95,7 +95,7 @@ parseCookie = do
   value <- stringWithout ([';', ','] <> whitespaceChars) <* dropSeperator
   attributes <- sepBy parseAttribute (string "; ") <* eof
 
-  let cookie = foldr ($) (Cookie.new name value) attributes
+  let cookie = foldl applyFlipped (Cookie.new name value) attributes
 
   pure $ cookie
 
