@@ -14,5 +14,5 @@ import HTTP.Cookie.Types
   , setPath
   , setSecure
   )
-import HTTP.Cookie.Generator (toString)
+import HTTP.Cookie.Generator (stringify)
 import HTTP.Cookie.Parser (parse)

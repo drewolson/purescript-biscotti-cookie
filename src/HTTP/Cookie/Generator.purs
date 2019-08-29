@@ -1,5 +1,5 @@
 module HTTP.Cookie.Generator
-  ( toString
+  ( stringify
   ) where
 
 import Prelude
@@ -10,8 +10,8 @@ import Data.Maybe (Maybe(..))
 import HTTP.Cookie.Formatter (formatDateTime)
 import HTTP.Cookie.Types (Cookie(..))
 
-toString :: Cookie -> String
-toString (Cookie cookie) = intercalate "; " $ catMaybes
+stringify :: Cookie -> String
+stringify (Cookie cookie) = intercalate "; " $ catMaybes
   [ attr cookie.name $ Just cookie.value
   , attr "Domain" cookie.domain
   , attr "Path" cookie.path

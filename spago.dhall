@@ -9,6 +9,7 @@
     , "gen"
     , "newtype"
     , "prelude"
+    , "profunctor-lenses"
     , "psci-support"
     , "quickcheck"
     , "record"

@@ -22,17 +22,17 @@ testSuite :: TestSuite
 testSuite = do
   suite "HTTP.Cookie" do
     suite "properties" do
-      test "parse and toString round trip correctly" do
+      test "parse and stringify round trip correctly" do
         quickCheck \cookie -> do
-          let new = Cookie.parse $ Cookie.toString $ cookie
+          let new = Cookie.parse $ Cookie.stringify $ cookie
 
           new ==? Right cookie
 
-    suite "toString" do
+    suite "stringify" do
       test "produces a correctly-formated expires attribute" do
         let date = unsafePartial $ fromJust $ DateTime.canonicalDate <$> toEnum 2019 <*> toEnum 12 <*> toEnum 1
         let time = unsafePartial $ fromJust $ Time <$> toEnum 12 <*> toEnum 1 <*> toEnum 2 <*> toEnum 0
-        let cookieString = Cookie.toString $ Cookie.setExpires (DateTime date time) $ Cookie.new "foo" "bar"
+        let cookieString = Cookie.stringify $ Cookie.setExpires (DateTime date time) $ Cookie.new "foo" "bar"
 
         cookieString `shouldContainString` "Expires=Sun, 01 Dec 2019 12:01:02 GMT"
 

@@ -1,5 +1,13 @@
 module HTTP.Cookie.Types
   ( Cookie(..)
+  , _domain
+  , _expires
+  , _httpOnly
+  , _maxAge
+  , _name
+  , _path
+  , _secure
+  , _value
   , new
   , setDomain
   , setExpires
@@ -15,9 +23,11 @@ import Control.Monad.Gen.Common (genMaybe)
 import Data.DateTime (DateTime, modifyTime, setMillisecond)
 import Data.DateTime.Gen (genDateTime)
 import Data.Enum (toEnum)
+import Data.Lens (Lens', lens)
+import Data.Lens as Lens
+import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Data.Newtype as Newtype
 import Data.String.Gen (genAsciiString)
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags (noFlags)
@@ -94,19 +104,43 @@ new name value = Cookie
   }
 
 setDomain :: String -> Cookie -> Cookie
-setDomain domain (Cookie cookie) = Cookie $ cookie { domain = Just domain }
-
-setPath :: String -> Cookie -> Cookie
-setPath path (Cookie cookie) = Cookie $ cookie { path = Just path }
+setDomain = Lens.setJust _domain
 
 setExpires :: DateTime -> Cookie -> Cookie
-setExpires expires (Cookie cookie) = Cookie $ cookie { expires = Just expires }
-
-setMaxAge :: Int -> Cookie -> Cookie
-setMaxAge maxAge (Cookie cookie) = Cookie $ cookie { maxAge = Just maxAge }
-
-setSecure :: Cookie -> Cookie
-setSecure = Newtype.wrap <<< _ { secure = true } <<< Newtype.unwrap
+setExpires = Lens.setJust _expires
 
 setHttpOnly :: Cookie -> Cookie
-setHttpOnly = Newtype.wrap <<< _ { httpOnly = true } <<< Newtype.unwrap
+setHttpOnly = Lens.set _httpOnly true
+
+setMaxAge :: Int -> Cookie -> Cookie
+setMaxAge = Lens.setJust _maxAge
+
+setPath :: String -> Cookie -> Cookie
+setPath = Lens.setJust _path
+
+setSecure :: Cookie -> Cookie
+setSecure = Lens.set _secure true
+
+_domain :: Lens' Cookie (Maybe String)
+_domain = _Newtype <<< (lens _.domain $ _ { domain = _ })
+
+_expires :: Lens' Cookie (Maybe DateTime)
+_expires = _Newtype <<< (lens _.expires $ _ { expires = _ })
+
+_httpOnly :: Lens' Cookie Boolean
+_httpOnly = _Newtype <<< (lens _.httpOnly $ _ { httpOnly = _ })
+
+_maxAge :: Lens' Cookie (Maybe Int)
+_maxAge = _Newtype <<< (lens _.maxAge $ _ { maxAge = _ })
+
+_name :: Lens' Cookie String
+_name = _Newtype <<< (lens _.name $ _ { name = _ })
+
+_path :: Lens' Cookie (Maybe String)
+_path = _Newtype <<< (lens _.path $ _ { path = _ })
+
+_secure :: Lens' Cookie Boolean
+_secure = _Newtype <<< (lens _.secure $ _ { secure = _ })
+
+_value :: Lens' Cookie String
+_value = _Newtype <<< (lens _.value $ _ { value = _ })
