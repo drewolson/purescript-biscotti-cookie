@@ -45,6 +45,7 @@ testSuite = do
               , path: Nothing
               , expires: Nothing
               , maxAge: Nothing
+              , sameSite: Nothing
               , secure: false
               , httpOnly: false
               }

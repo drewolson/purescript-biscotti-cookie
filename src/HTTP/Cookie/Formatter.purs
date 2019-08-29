@@ -1,5 +1,12 @@
 module HTTP.Cookie.Formatter
-  ( formatDateTime
+  ( domainTag
+  , expiresTag
+  , formatDateTime
+  , httpOnlyTag
+  , maxAgeTag
+  , pathTag
+  , sameSiteTag
+  , secureTag
   , unformatDateTime
   ) where
 
@@ -8,6 +15,27 @@ import Data.Either (Either)
 import Data.Formatter.DateTime (Formatter, FormatterCommand(..))
 import Data.Formatter.DateTime as Formatter
 import Data.List as List
+
+domainTag :: String
+domainTag = "Domain"
+
+expiresTag :: String
+expiresTag = "Expires"
+
+httpOnlyTag :: String
+httpOnlyTag = "HttpOnly"
+
+maxAgeTag :: String
+maxAgeTag = "Max-Age"
+
+pathTag :: String
+pathTag = "Path"
+
+secureTag :: String
+secureTag = "Secure"
+
+sameSiteTag :: String
+sameSiteTag = "SameSite"
 
 expiresFormatter :: Formatter
 expiresFormatter = List.fromFoldable

@@ -12,8 +12,8 @@ import Data.Function (applyFlipped)
 import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import HTTP.Cookie.Formatter (unformatDateTime)
-import HTTP.Cookie.Types (Cookie)
+import HTTP.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
+import HTTP.Cookie.Types (Cookie, SameSite(..))
 import HTTP.Cookie.Types as Cookie
 import Text.Parsing.StringParser (ParseError, Parser, fail, runParser)
 import Text.Parsing.StringParser.CodePoints (eof, noneOf, string)
@@ -38,19 +38,19 @@ whitespaceChars = [' ', '\n', '\r', '\t']
 
 parseDomain :: Parser Attribute
 parseDomain = do
-  domain <- (string "Domain=") *> attributeValue
+  domain <- (string $ domainTag <> "=") *> attributeValue
 
   pure $ Cookie.setDomain domain
 
 parsePath :: Parser Attribute
 parsePath = do
-  path <- (string "Path=") *> attributeValue
+  path <- (string $ pathTag <> "=") *> attributeValue
 
   pure $ Cookie.setPath path
 
 parseExpires :: Parser Attribute
 parseExpires = do
-  expiresString <- (string "Expires=") *> attributeValue
+  expiresString <- (string $ expiresTag <> "=") *> attributeValue
 
   case unformatDateTime expiresString of
     Left e ->
@@ -61,7 +61,7 @@ parseExpires = do
 
 parseMaxAge :: Parser Attribute
 parseMaxAge = do
-  maxAgeString <- (string "Max-Age=") *> attributeValue
+  maxAgeString <- (string $ maxAgeTag <> "=") *> attributeValue
 
   case Int.fromString maxAgeString of
     Nothing ->
@@ -71,13 +71,20 @@ parseMaxAge = do
       pure $ Cookie.setMaxAge maxAge
 
 parseSecure :: Parser Attribute
-parseSecure = (string "Secure") $> Cookie.setSecure
+parseSecure = (string secureTag) $> Cookie.setSecure
 
 parseHttpOnly :: Parser Attribute
-parseHttpOnly = (string "HttpOnly") $> Cookie.setHttpOnly
+parseHttpOnly = (string httpOnlyTag) $> Cookie.setHttpOnly
 
-parseUnknown :: Parser Attribute
-parseUnknown = attributeValue $> identity
+parseSameSite :: Parser Attribute
+parseSameSite = do
+  sameSiteString <- (string $ sameSiteTag <> "=") *> attributeValue
+
+  case sameSiteString of
+    "Strict" -> pure $ Cookie.setSameSite Strict
+    "Lax"    -> pure $ Cookie.setSameSite Lax
+    "None"   -> pure $ Cookie.setSameSite None
+    val      -> fail $ "unknown SiteSite value " <> val
 
 parseAttribute :: Parser Attribute
 parseAttribute =
@@ -87,7 +94,7 @@ parseAttribute =
   <|> parseMaxAge
   <|> parseSecure
   <|> parseHttpOnly
-  <|> parseUnknown
+  <|> parseSameSite
 
 parseCookie :: Parser Cookie
 parseCookie = do

@@ -1,5 +1,6 @@
 module HTTP.Cookie.Types
   ( Cookie(..)
+  , SameSite(..)
   , _domain
   , _expires
   , _httpOnly
@@ -14,6 +15,7 @@ module HTTP.Cookie.Types
   , setHttpOnly
   , setMaxAge
   , setPath
+  , setSameSite
   , setSecure
   ) where
 
@@ -28,12 +30,32 @@ import Data.Lens as Lens
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
+import Data.NonEmpty ((:|))
 import Data.String.Gen (genAsciiString)
 import Data.String.Regex as Regex
 import Data.String.Regex.Flags (noFlags)
 import Data.String.Regex.Unsafe (unsafeRegex)
 import Test.QuickCheck (class Arbitrary, arbitrary)
-import Test.QuickCheck.Gen (Gen, suchThat)
+import Test.QuickCheck.Gen (Gen, elements, suchThat)
+
+data SameSite
+  = Strict
+  | Lax
+  | None
+
+derive instance eqSameSite :: Eq SameSite
+
+derive instance ordSameSite :: Ord SameSite
+
+instance showSameSite :: Show SameSite where
+  show :: SameSite -> String
+  show Strict = "Strict"
+  show Lax    = "Lax"
+  show None   = "None"
+
+instance sameSiteArbitrary :: Arbitrary SameSite where
+  arbitrary :: Gen SameSite
+  arbitrary = elements $ Strict :| [Lax, None]
 
 newtype Cookie = Cookie
   { name     :: String
@@ -42,6 +64,7 @@ newtype Cookie = Cookie
   , path     :: Maybe String
   , expires  :: Maybe DateTime
   , maxAge   :: Maybe Int
+  , sameSite :: Maybe SameSite
   , secure   :: Boolean
   , httpOnly :: Boolean
   }
@@ -63,6 +86,7 @@ instance cookieArbitrary :: Arbitrary Cookie where
     path <- genMaybe $ pure "/"
     expires <- genMaybe $ zeroMillisconds <$> genDateTime
     maxAge <- arbitrary
+    sameSite <- arbitrary
     secure <- arbitrary
     httpOnly <- arbitrary
 
@@ -73,6 +97,7 @@ instance cookieArbitrary :: Arbitrary Cookie where
       , path
       , expires
       , maxAge
+      , sameSite
       , secure
       , httpOnly
       }
@@ -99,6 +124,7 @@ new name value = Cookie
   , path: Nothing
   , expires: Nothing
   , maxAge: Nothing
+  , sameSite: Nothing
   , secure: false
   , httpOnly: false
   }
@@ -117,6 +143,9 @@ setMaxAge = Lens.setJust _maxAge
 
 setPath :: String -> Cookie -> Cookie
 setPath = Lens.setJust _path
+
+setSameSite :: SameSite -> Cookie -> Cookie
+setSameSite = Lens.setJust _sameSite
 
 setSecure :: Cookie -> Cookie
 setSecure = Lens.set _secure true
@@ -138,6 +167,9 @@ _name = _Newtype <<< (lens _.name $ _ { name = _ })
 
 _path :: Lens' Cookie (Maybe String)
 _path = _Newtype <<< (lens _.path $ _ { path = _ })
+
+_sameSite :: Lens' Cookie (Maybe SameSite)
+_sameSite = _Newtype <<< (lens _.sameSite $ _ { sameSite = _ })
 
 _secure :: Lens' Cookie Boolean
 _secure = _Newtype <<< (lens _.secure $ _ { secure = _ })
