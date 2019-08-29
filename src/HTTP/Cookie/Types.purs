@@ -1,6 +1,8 @@
 module HTTP.Cookie.Types
   ( Cookie(..)
+  , Fields
   , SameSite(..)
+  , _Cookie
   , _domain
   , _expires
   , _httpOnly
@@ -9,6 +11,7 @@ module HTTP.Cookie.Types
   , _path
   , _secure
   , _value
+  , empty
   , new
   , setDomain
   , setExpires
@@ -25,11 +28,9 @@ import Control.Monad.Gen.Common (genMaybe)
 import Data.DateTime (DateTime, modifyTime, setMillisecond)
 import Data.DateTime.Gen (genDateTime)
 import Data.Enum (toEnum)
-import Data.Lens (Lens', lens)
+import Data.Lens (Prism', Traversal', lens, prism')
 import Data.Lens as Lens
-import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
 import Data.NonEmpty ((:|))
 import Data.String.Gen (genAsciiString)
 import Data.String.Regex as Regex
@@ -57,7 +58,7 @@ instance sameSiteArbitrary :: Arbitrary SameSite where
   arbitrary :: Gen SameSite
   arbitrary = elements $ Strict :| [Lax, None]
 
-newtype Cookie = Cookie
+type Fields =
   { name     :: String
   , value    :: String
   , domain   :: Maybe String
@@ -69,13 +70,18 @@ newtype Cookie = Cookie
   , httpOnly :: Boolean
   }
 
-derive instance newtypeCookie :: Newtype Cookie _
+data Cookie
+  = Cookie Fields
+  | Empty
 
-derive newtype instance eqCookie :: Eq Cookie
+derive instance eqCookie :: Eq Cookie
 
-derive newtype instance ordCookie :: Ord Cookie
+derive instance ordCookie :: Ord Cookie
 
-derive newtype instance showCookie :: Show Cookie
+instance showCookie :: Show Cookie where
+  show :: Cookie -> String
+  show (Cookie r) = "Cookie " <> show r
+  show Empty      = "Empty"
 
 instance cookieArbitrary :: Arbitrary Cookie where
   arbitrary :: Gen Cookie
@@ -90,17 +96,19 @@ instance cookieArbitrary :: Arbitrary Cookie where
     secure <- arbitrary
     httpOnly <- arbitrary
 
-    pure $ Cookie
-      { name
-      , value
-      , domain
-      , path
-      , expires
-      , maxAge
-      , sameSite
-      , secure
-      , httpOnly
-      }
+    let cookie = Cookie
+          { name
+          , value
+          , domain
+          , path
+          , expires
+          , maxAge
+          , sameSite
+          , secure
+          , httpOnly
+          }
+
+    elements $ cookie :| [Empty]
     where
       zeroMillisconds :: DateTime -> DateTime
       zeroMillisconds dateTime =
@@ -129,6 +137,9 @@ new name value = Cookie
   , httpOnly: false
   }
 
+empty :: Cookie
+empty = Empty
+
 setDomain :: String -> Cookie -> Cookie
 setDomain = Lens.setJust _domain
 
@@ -150,29 +161,34 @@ setSameSite = Lens.setJust _sameSite
 setSecure :: Cookie -> Cookie
 setSecure = Lens.set _secure true
 
-_domain :: Lens' Cookie (Maybe String)
-_domain = _Newtype <<< (lens _.domain $ _ { domain = _ })
+_Cookie :: Prism' Cookie Fields
+_Cookie = prism' Cookie $ case _ of
+  (Cookie r) -> Just r
+  _          -> Nothing
 
-_expires :: Lens' Cookie (Maybe DateTime)
-_expires = _Newtype <<< (lens _.expires $ _ { expires = _ })
+_domain :: Traversal' Cookie (Maybe String)
+_domain = _Cookie <<< (lens _.domain $ _ { domain = _ })
 
-_httpOnly :: Lens' Cookie Boolean
-_httpOnly = _Newtype <<< (lens _.httpOnly $ _ { httpOnly = _ })
+_expires :: Traversal' Cookie (Maybe DateTime)
+_expires = _Cookie <<< (lens _.expires $ _ { expires = _ })
 
-_maxAge :: Lens' Cookie (Maybe Int)
-_maxAge = _Newtype <<< (lens _.maxAge $ _ { maxAge = _ })
+_httpOnly :: Traversal' Cookie Boolean
+_httpOnly = _Cookie <<< (lens _.httpOnly $ _ { httpOnly = _ })
 
-_name :: Lens' Cookie String
-_name = _Newtype <<< (lens _.name $ _ { name = _ })
+_maxAge :: Traversal' Cookie (Maybe Int)
+_maxAge = _Cookie <<< (lens _.maxAge $ _ { maxAge = _ })
 
-_path :: Lens' Cookie (Maybe String)
-_path = _Newtype <<< (lens _.path $ _ { path = _ })
+_name :: Traversal' Cookie String
+_name = _Cookie <<< (lens _.name $ _ { name = _ })
 
-_sameSite :: Lens' Cookie (Maybe SameSite)
-_sameSite = _Newtype <<< (lens _.sameSite $ _ { sameSite = _ })
+_path :: Traversal' Cookie (Maybe String)
+_path = _Cookie <<< (lens _.path $ _ { path = _ })
 
-_secure :: Lens' Cookie Boolean
-_secure = _Newtype <<< (lens _.secure $ _ { secure = _ })
+_sameSite :: Traversal' Cookie (Maybe SameSite)
+_sameSite = _Cookie <<< (lens _.sameSite $ _ { sameSite = _ })
 
-_value :: Lens' Cookie String
-_value = _Newtype <<< (lens _.value $ _ { value = _ })
+_secure :: Traversal' Cookie Boolean
+_secure = _Cookie <<< (lens _.secure $ _ { secure = _ })
+
+_value :: Traversal' Cookie String
+_value = _Cookie <<< (lens _.value $ _ { value = _ })

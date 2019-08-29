@@ -11,6 +11,7 @@ import HTTP.Cookie.Formatter (domainTag, expiresTag, formatDateTime, httpOnlyTag
 import HTTP.Cookie.Types (Cookie(..))
 
 stringify :: Cookie -> String
+stringify Empty = ""
 stringify (Cookie cookie) = intercalate "; " $ catMaybes
   [ attr cookie.name $ Just cookie.value
   , attr domainTag cookie.domain

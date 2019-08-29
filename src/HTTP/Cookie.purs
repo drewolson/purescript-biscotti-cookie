@@ -6,6 +6,7 @@ module HTTP.Cookie
 
 import HTTP.Cookie.Types
   ( Cookie
+  , empty
   , new
   , setDomain
   , setExpires

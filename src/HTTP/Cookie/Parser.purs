@@ -13,9 +13,9 @@ import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import HTTP.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
-import HTTP.Cookie.Types (Cookie, SameSite(..))
+import HTTP.Cookie.Types (Cookie(..), SameSite(..))
 import HTTP.Cookie.Types as Cookie
-import Text.Parsing.StringParser (ParseError, Parser, fail, runParser)
+import Text.Parsing.StringParser (ParseError, Parser, fail, runParser, try)
 import Text.Parsing.StringParser.CodePoints (eof, noneOf, string)
 import Text.Parsing.StringParser.Combinators (many, sepBy)
 
@@ -96,15 +96,20 @@ parseAttribute =
   <|> parseHttpOnly
   <|> parseSameSite
 
-parseCookie :: Parser Cookie
-parseCookie = do
+parseFields :: Parser Cookie
+parseFields = do
   name <- stringWithout ([';', ',', '='] <> whitespaceChars) <* string "="
   value <- stringWithout ([';', ','] <> whitespaceChars) <* dropSeperator
   attributes <- sepBy parseAttribute (string "; ") <* eof
-
   let cookie = foldl applyFlipped (Cookie.new name value) attributes
 
   pure $ cookie
+
+parseEmpty :: Parser Cookie
+parseEmpty = string "" *> eof $> Empty
+
+parseCookie :: Parser Cookie
+parseCookie = (try parseFields) <|> parseEmpty
 
 parse :: String -> Either ParseError Cookie
 parse = runParser parseCookie
