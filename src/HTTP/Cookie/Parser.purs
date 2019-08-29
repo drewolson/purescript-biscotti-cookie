@@ -77,7 +77,7 @@ parseHttpOnly :: Parser Attribute
 parseHttpOnly = (string "HttpOnly") $> Cookie.setHttpOnly
 
 parseUnknown :: Parser Attribute
-parseUnknown = stringWithout [';'] $> identity
+parseUnknown = attributeValue $> identity
 
 parseAttribute :: Parser Attribute
 parseAttribute =
