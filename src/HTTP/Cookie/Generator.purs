@@ -16,9 +16,9 @@ stringify (Cookie cookie) = intercalate "; " $ catMaybes
   [ attr cookie.name $ Just cookie.value
   , attr domainTag cookie.domain
   , attr pathTag cookie.path
-  , attr expiresTag (formatDateTime <$> cookie.expires)
-  , attr maxAgeTag (show <$> cookie.maxAge)
-  , attr sameSiteTag (show <$> cookie.sameSite)
+  , attr expiresTag $ formatDateTime <$> cookie.expires
+  , attr maxAgeTag $ show <$> cookie.maxAge
+  , attr sameSiteTag $ show <$> cookie.sameSite
   , flag secureTag cookie.secure
   , flag httpOnlyTag cookie.httpOnly
   ]

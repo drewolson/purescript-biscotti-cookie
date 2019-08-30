@@ -164,7 +164,7 @@ setSecure = Lens.set _secure true
 _Cookie :: Prism' Cookie Fields
 _Cookie = prism' Cookie $ case _ of
   (Cookie r) -> Just r
-  _          -> Nothing
+  _ -> Nothing
 
 _domain :: Traversal' Cookie (Maybe String)
 _domain = _Cookie <<< (lens _.domain $ _ { domain = _ })

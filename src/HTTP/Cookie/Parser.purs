@@ -103,7 +103,7 @@ parseFields = do
   attributes <- sepBy parseAttribute (string "; ") <* eof
   let cookie = foldl applyFlipped (Cookie.new name value) attributes
 
-  pure $ cookie
+  pure cookie
 
 parseEmpty :: Parser Cookie
 parseEmpty = string "" *> eof $> Empty
