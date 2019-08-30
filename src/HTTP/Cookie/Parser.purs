@@ -8,7 +8,6 @@ import Control.Alt ((<|>))
 import Data.Array as Array
 import Data.Either (Either(..))
 import Data.Foldable (class Foldable, foldl)
-import Data.Function (applyFlipped)
 import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.String as String
@@ -101,7 +100,7 @@ parseFields = do
   name <- stringWithout ([';', ',', '='] <> whitespaceChars) <* string "="
   value <- stringWithout ([';', ','] <> whitespaceChars) <* dropSeperator
   attributes <- sepBy parseAttribute (string "; ") <* eof
-  let cookie = foldl applyFlipped (Cookie.new name value) attributes
+  let cookie = foldl (#) (Cookie.new name value) attributes
 
   pure cookie
 
