@@ -12,6 +12,7 @@ module HTTP.Cookie.Types
   , _secure
   , _value
   , empty
+  , getValue
   , new
   , setDomain
   , setExpires
@@ -139,6 +140,9 @@ new name value = Cookie
 
 empty :: Cookie
 empty = Empty
+
+getValue :: Cookie -> String
+getValue = Lens.view _value
 
 setDomain :: String -> Cookie -> Cookie
 setDomain = Lens.setJust _domain
