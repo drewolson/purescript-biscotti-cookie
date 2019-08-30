@@ -1,4 +1,5 @@
 {
+  "description": "purescript-cookie-parser",
   "repository": "https://github.com/drewolson/purescript-cookie-parser",
   "license": "MIT",
   "devDependencies": {
