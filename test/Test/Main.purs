@@ -3,7 +3,7 @@ module Test.Main where
 import Prelude
 
 import Effect (Effect)
-import Test.HTTP.CookieTest as CookieTest
+import Test.Biscotti.CookieTest as CookieTest
 import Test.Unit.Main (runTest)
 
 main :: Effect Unit

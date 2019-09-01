@@ -1,4 +1,4 @@
-module HTTP.Cookie.Formatter
+module Biscotti.Cookie.Formatter
   ( domainTag
   , expiresTag
   , formatDateTime

@@ -1,4 +1,4 @@
-# purescript-cookie-parser
+# purescript-biscotti-cookie
 
 This library allows parsing and generating cookie headers. You'll generally use
 the `Cookie.new` function to create a cookie from a name/value pair and the
@@ -11,7 +11,7 @@ writing to an HTTP header.
 `Either ParseError Cookie`.
 
 ```purescript
-import HTTP.Cookie as Cookie
+import Biscotti.Cookie as Cookie
 
 > Cookie.stringify $ Cookie.setSecure $ Cookie.new "key" "value"
 key=value; Secure

@@ -1,4 +1,4 @@
-module HTTP.Cookie.Types
+module Biscotti.Cookie.Types
   ( Cookie(..)
   , Fields
   , SameSite(..)

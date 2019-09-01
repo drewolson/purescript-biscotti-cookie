@@ -1,9 +1,12 @@
-module HTTP.Cookie.Parser
+module Biscotti.Cookie.Parser
   ( parse
   ) where
 
 import Prelude
 
+import Biscotti.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
+import Biscotti.Cookie.Types (Cookie(..), SameSite(..))
+import Biscotti.Cookie.Types as Cookie
 import Control.Alt ((<|>))
 import Data.Array as Array
 import Data.Either (Either(..))
@@ -11,9 +14,6 @@ import Data.Foldable (class Foldable, foldl)
 import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import HTTP.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
-import HTTP.Cookie.Types (Cookie(..), SameSite(..))
-import HTTP.Cookie.Types as Cookie
 import Text.Parsing.StringParser (ParseError, Parser, fail, runParser, try)
 import Text.Parsing.StringParser.CodePoints (eof, noneOf, string)
 import Text.Parsing.StringParser.Combinators (many, sepBy)

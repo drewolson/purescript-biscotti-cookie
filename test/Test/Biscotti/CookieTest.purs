@@ -1,16 +1,16 @@
-module Test.HTTP.CookieTest
+module Test.Biscotti.CookieTest
   ( testSuite
   ) where
 
 import Prelude
 
+import Biscotti.Cookie as Cookie
+import Biscotti.Cookie.Types (Cookie(..))
 import Data.DateTime (DateTime(..), Time(..))
 import Data.DateTime as DateTime
 import Data.Either (Either(..))
 import Data.Enum (toEnum)
 import Data.Maybe (Maybe(..), fromJust)
-import HTTP.Cookie as Cookie
-import HTTP.Cookie.Types (Cookie(..))
 import Partial.Unsafe (unsafePartial)
 import Test.QuickCheck ((==?))
 import Test.Unit (TestSuite, suite, test)
@@ -20,7 +20,7 @@ import Test.Util.Assert (shouldContainString)
 
 testSuite :: TestSuite
 testSuite = do
-  suite "HTTP.Cookie" do
+  suite "Biscotti.Cookie" do
     suite "properties" do
       test "parse and stringify round trip correctly" do
         quickCheck \cookie -> do

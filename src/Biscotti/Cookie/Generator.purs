@@ -1,14 +1,14 @@
-module HTTP.Cookie.Generator
+module Biscotti.Cookie.Generator
   ( stringify
   ) where
 
 import Prelude
 
+import Biscotti.Cookie.Formatter (domainTag, expiresTag, formatDateTime, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag)
+import Biscotti.Cookie.Types (Cookie(..))
 import Data.Array (catMaybes)
 import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
-import HTTP.Cookie.Formatter (domainTag, expiresTag, formatDateTime, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag)
-import HTTP.Cookie.Types (Cookie(..))
 
 stringify :: Cookie -> String
 stringify Empty = ""

@@ -1,5 +1,5 @@
 { name =
-    "cookie-parser"
+    "biscotti-cookie"
 , dependencies =
     [ "datetime"
     , "effect"
