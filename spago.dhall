@@ -1,5 +1,9 @@
 { name =
     "biscotti-cookie"
+, license =
+    "MIT"
+, repository =
+    "https://github.com/drewolson/purescript-biscotti-cookie"
 , dependencies =
     [ "datetime"
     , "effect"
