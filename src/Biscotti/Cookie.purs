@@ -8,7 +8,7 @@ import Biscotti.Cookie.Generator (stringify)
 import Biscotti.Cookie.Parser (parse)
 import Biscotti.Cookie.Types
   ( Cookie
-  , empty
+  , expired
   , getValue
   , new
   , setDomain

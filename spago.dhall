@@ -12,6 +12,7 @@
     , "formatters"
     , "gen"
     , "newtype"
+    , "now"
     , "prelude"
     , "profunctor-lenses"
     , "psci-support"

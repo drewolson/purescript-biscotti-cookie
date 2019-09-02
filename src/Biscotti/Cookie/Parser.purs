@@ -5,7 +5,7 @@ module Biscotti.Cookie.Parser
 import Prelude
 
 import Biscotti.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
-import Biscotti.Cookie.Types (Cookie(..), SameSite(..))
+import Biscotti.Cookie.Types (Cookie, SameSite(..))
 import Biscotti.Cookie.Types as Cookie
 import Control.Alt ((<|>))
 import Data.Array as Array
@@ -14,7 +14,7 @@ import Data.Foldable (class Foldable, foldl)
 import Data.Int as Int
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import Text.Parsing.StringParser (ParseError, Parser, fail, runParser, try)
+import Text.Parsing.StringParser (ParseError, Parser, fail, runParser)
 import Text.Parsing.StringParser.CodePoints (eof, noneOf, string)
 import Text.Parsing.StringParser.Combinators (many, sepBy)
 
@@ -95,20 +95,14 @@ parseAttribute =
   <|> parseHttpOnly
   <|> parseSameSite
 
-parseFields :: Parser Cookie
-parseFields = do
+parseCookie :: Parser Cookie
+parseCookie = do
   name <- stringWithout ([';', ',', '='] <> whitespaceChars) <* string "="
   value <- stringWithout ([';', ','] <> whitespaceChars) <* dropSeperator
   attributes <- sepBy parseAttribute (string "; ") <* eof
   let cookie = foldl (#) (Cookie.new name value) attributes
 
   pure cookie
-
-parseEmpty :: Parser Cookie
-parseEmpty = string "" *> eof $> Empty
-
-parseCookie :: Parser Cookie
-parseCookie = (try parseFields) <|> parseEmpty
 
 parse :: String -> Either ParseError Cookie
 parse = runParser parseCookie

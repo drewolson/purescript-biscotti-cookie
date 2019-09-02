@@ -11,7 +11,6 @@ import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
 
 stringify :: Cookie -> String
-stringify Empty = ""
 stringify (Cookie cookie) = intercalate "; " $ catMaybes
   [ attr cookie.name $ Just cookie.value
   , attr domainTag cookie.domain
