@@ -41,7 +41,7 @@ import Data.String.Regex as Regex
 import Data.String.Regex.Flags (noFlags)
 import Data.String.Regex.Unsafe (unsafeRegex)
 import Data.Time.Duration (Days(..))
-import Effect.Class (class MonadEffect, liftEffect)
+import Effect (Effect)
 import Effect.Now (nowDateTime)
 import Test.QuickCheck (class Arbitrary, arbitrary)
 import Test.QuickCheck.Gen (Gen, elements, suchThat)
@@ -139,9 +139,9 @@ new name value = Cookie
   , httpOnly: false
   }
 
-expired :: forall m. MonadEffect m => Cookie -> m (Either String Cookie)
+expired :: Cookie -> Effect (Either String Cookie)
 expired cookie = do
-  now <- liftEffect $ nowDateTime
+  now <- nowDateTime
   let maybeDate = DateTime.adjust (Days $ -1.0) now
 
   case maybeDate of
