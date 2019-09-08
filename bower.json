@@ -1,0 +1,34 @@
+{
+    "name": "purescript-biscotti-cookie",
+    "license": [
+        "MIT"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/drewolson/purescript-biscotti-cookie"
+    },
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "output"
+    ],
+    "dependencies": {
+        "purescript-datetime": "^v4.1.1",
+        "purescript-effect": "^v2.0.1",
+        "purescript-either": "^v4.1.1",
+        "purescript-foldable-traversable": "^v4.1.1",
+        "purescript-formatters": "^v4.0.1",
+        "purescript-gen": "^v2.1.1",
+        "purescript-newtype": "^v3.0.0",
+        "purescript-now": "^v4.0.0",
+        "purescript-prelude": "^v4.1.1",
+        "purescript-profunctor-lenses": "^v6.2.0",
+        "purescript-psci-support": "^v4.0.0",
+        "purescript-quickcheck": "^v6.1.0",
+        "purescript-record": "^v2.0.1",
+        "purescript-string-parsers": "^v5.0.0",
+        "purescript-strings": "^v4.0.1",
+        "purescript-test-unit": "^v15.0.0"
+    }
+}
