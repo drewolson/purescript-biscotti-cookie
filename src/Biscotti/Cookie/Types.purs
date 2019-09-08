@@ -10,7 +10,7 @@ module Biscotti.Cookie.Types
   , _path
   , _secure
   , _value
-  , expired
+  , expire
   , getDomain
   , getExpires
   , getHttpOnly
@@ -150,8 +150,8 @@ new name value = Cookie
 
 -- | Expire an existing `Cookie`. This sets the `Expires` attribute of
 -- | the cookie to yesterday's date.
-expired :: Cookie -> Effect (Either String Cookie)
-expired cookie = do
+expire :: Cookie -> Effect (Either String Cookie)
+expire cookie = do
   now <- nowDateTime
   let maybeDate = DateTime.adjust (Days $ -1.0) now
 

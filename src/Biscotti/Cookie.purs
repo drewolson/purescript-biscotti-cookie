@@ -36,7 +36,7 @@ import Biscotti.Cookie.Types
   , _path
   , _secure
   , _value
-  , expired
+  , expire
   , getDomain
   , getExpires
   , getHttpOnly
