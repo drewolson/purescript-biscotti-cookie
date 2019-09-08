@@ -4,7 +4,16 @@ module Biscotti.Cookie.Parser
 
 import Prelude
 
-import Biscotti.Cookie.Formatter (domainTag, expiresTag, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag, unformatDateTime)
+import Biscotti.Cookie.Formatter
+  ( domainTag
+  , expiresTag
+  , httpOnlyTag
+  , maxAgeTag
+  , pathTag
+  , sameSiteTag
+  , secureTag
+  , unformatDateTime
+  )
 import Biscotti.Cookie.Types (Cookie, SameSite(..))
 import Biscotti.Cookie.Types as Cookie
 import Control.Alt ((<|>))

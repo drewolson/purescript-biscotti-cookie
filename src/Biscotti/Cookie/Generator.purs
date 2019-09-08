@@ -4,7 +4,16 @@ module Biscotti.Cookie.Generator
 
 import Prelude
 
-import Biscotti.Cookie.Formatter (domainTag, expiresTag, formatDateTime, httpOnlyTag, maxAgeTag, pathTag, sameSiteTag, secureTag)
+import Biscotti.Cookie.Formatter
+  ( domainTag
+  , expiresTag
+  , formatDateTime
+  , httpOnlyTag
+  , maxAgeTag
+  , pathTag
+  , sameSiteTag
+  , secureTag
+  )
 import Biscotti.Cookie.Types (Cookie(..))
 import Data.Array (catMaybes)
 import Data.Foldable (intercalate)

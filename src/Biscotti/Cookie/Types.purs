@@ -11,6 +11,14 @@ module Biscotti.Cookie.Types
   , _secure
   , _value
   , expired
+  , getDomain
+  , getExpires
+  , getHttpOnly
+  , getMaxAge
+  , getName
+  , getPath
+  , getSameSite
+  , getSecure
   , getValue
   , new
   , setDomain
@@ -150,6 +158,30 @@ expired cookie = do
 
     Just yesterday ->
       pure $ Right $ setExpires yesterday cookie
+
+getDomain :: Cookie -> Maybe String
+getDomain = Lens.view _domain
+
+getExpires :: Cookie -> Maybe DateTime
+getExpires = Lens.view _expires
+
+getHttpOnly :: Cookie -> Boolean
+getHttpOnly = Lens.view _httpOnly
+
+getMaxAge :: Cookie -> Maybe Int
+getMaxAge = Lens.view _maxAge
+
+getName :: Cookie -> String
+getName = Lens.view _name
+
+getPath :: Cookie -> Maybe String
+getPath = Lens.view _path
+
+getSameSite :: Cookie -> Maybe SameSite
+getSameSite = Lens.view _sameSite
+
+getSecure :: Cookie -> Boolean
+getSecure = Lens.view _secure
 
 getValue :: Cookie -> String
 getValue = Lens.view _value
