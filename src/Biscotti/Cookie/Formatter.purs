@@ -1,3 +1,5 @@
+-- | This module is response for formatting and parsing the `Expires`
+-- | attribute of a `Cookie`.
 module Biscotti.Cookie.Formatter
   ( domainTag
   , expiresTag

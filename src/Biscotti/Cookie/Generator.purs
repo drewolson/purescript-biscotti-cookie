@@ -1,3 +1,5 @@
+-- | This module is responsible for generating the string representation
+-- | of a `Cookie`.
 module Biscotti.Cookie.Generator
   ( stringify
   ) where
@@ -19,6 +21,12 @@ import Data.Array (catMaybes)
 import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
 
+-- | Return the `String` representation of a `Cookie`.
+-- |
+-- | ```purescript
+-- | > Generator.stringify $ Cookie.setSecure $ Cookie.new "key" "value"
+-- | key=value; Secure
+-- | ```
 stringify :: Cookie -> String
 stringify (Cookie cookie) = intercalate "; " $ catMaybes
   [ attr cookie.name $ Just cookie.value

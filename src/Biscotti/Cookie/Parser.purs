@@ -1,3 +1,5 @@
+-- | This module is responsible for parsing a string into an
+-- | `Either ParseError Cookie`.
 module Biscotti.Cookie.Parser
   ( parse
   ) where
@@ -113,5 +115,11 @@ parseCookie = do
 
   pure cookie
 
+-- | Parses a `String` into an `Either ParseError Cookie`.
+-- |
+-- | ```purescript
+-- | > Parser.parse "key=value; Secure"
+-- | (Right { name: "key", value: "value", secure: true, ... })
+-- | ```
 parse :: String -> Either ParseError Cookie
 parse = runParser parseCookie

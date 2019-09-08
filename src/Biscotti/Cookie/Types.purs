@@ -1,6 +1,6 @@
+-- | This module contains the `Cookie` type and functions for operating on data within it.
 module Biscotti.Cookie.Types
   ( Cookie(..)
-  , Fields
   , SameSite(..)
   , _domain
   , _expires
@@ -54,6 +54,7 @@ import Effect.Now (nowDateTime)
 import Test.QuickCheck (class Arbitrary, arbitrary)
 import Test.QuickCheck.Gen (Gen, elements, suchThat)
 
+-- | Type representing a `Cookie`'s optional `SameSite` attribute.
 data SameSite
   = Strict
   | Lax
@@ -73,7 +74,8 @@ instance sameSiteArbitrary :: Arbitrary SameSite where
   arbitrary :: Gen SameSite
   arbitrary = elements $ Strict :| [Lax, None]
 
-type Fields =
+-- | The `Cookie` type
+newtype Cookie = Cookie
   { name     :: String
   , value    :: String
   , domain   :: Maybe String
@@ -84,8 +86,6 @@ type Fields =
   , secure   :: Boolean
   , httpOnly :: Boolean
   }
-
-newtype Cookie = Cookie Fields
 
 derive instance newtypeCookie :: Newtype Cookie _
 
@@ -134,6 +134,7 @@ instance cookieArbitrary :: Arbitrary Cookie where
       validValue :: String -> Boolean
       validValue = not <<< Regex.test $ unsafeRegex """[;,\s]""" noFlags
 
+-- | The constructor for `Cookie`
 new :: String -> String -> Cookie
 new name value = Cookie
   { name
@@ -147,6 +148,8 @@ new name value = Cookie
   , httpOnly: false
   }
 
+-- | Expire an existing `Cookie`. This sets the `Expires` attribute of
+-- | the cookie to yesterday's date.
 expired :: Cookie -> Effect (Either String Cookie)
 expired cookie = do
   now <- nowDateTime
