@@ -1,5 +1,8 @@
 # purescript-biscotti-cookie
 
+Documentation is available on
+[Pursuit](https://pursuit.purescript.org/packages/purescript-biscotti-cookie).
+
 This library allows parsing and generating cookie headers. You'll generally use
 the `Cookie.new` function to create a cookie from a name/value pair and the
 `Cookie.set*` functions to set attributes on a cookie.
@@ -19,9 +22,6 @@ key=value; Secure
 > Cookie.parse "key=value; Secure"
 (Right { domain: Nothing, expires: Nothing, httpOnly: false, maxAge: Nothing, name: "key", path: Nothing, secure: true, value: "value" })
 ```
-
-Documentation is available on
-[Pursuit](https://pursuit.purescript.org/packages/purescript-biscotti-cookie).
 
 ## Running the tests
 
