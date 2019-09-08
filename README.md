@@ -20,6 +20,9 @@ key=value; Secure
 (Right { domain: Nothing, expires: Nothing, httpOnly: false, maxAge: Nothing, name: "key", path: Nothing, secure: true, value: "value" })
 ```
 
+Documentation is available on
+[Pursuit](https://pursuit.purescript.org/packages/purescript-biscotti-cookie).
+
 ## Running the tests
 
 ```text
