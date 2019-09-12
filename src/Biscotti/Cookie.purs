@@ -24,7 +24,7 @@ module Biscotti.Cookie
   ) where
 
 import Biscotti.Cookie.Generator (stringify)
-import Biscotti.Cookie.Parser (parse)
+import Biscotti.Cookie.Parser (parse, parseMany)
 import Biscotti.Cookie.Types
   ( Cookie
   , SameSite(..)

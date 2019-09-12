@@ -2,6 +2,7 @@
 -- | `Either ParseError Cookie`.
 module Biscotti.Cookie.Parser
   ( parse
+  , parseMany
   ) where
 
 import Prelude
@@ -23,6 +24,7 @@ import Data.Array as Array
 import Data.Either (Either(..))
 import Data.Foldable (class Foldable, foldl)
 import Data.Int as Int
+import Data.List (List)
 import Data.Maybe (Maybe(..))
 import Data.String as String
 import Text.Parsing.StringParser (ParseError, Parser, fail, runParser)
@@ -106,16 +108,26 @@ parseAttribute =
   <|> parseHttpOnly
   <|> parseSameSite
 
+parseSimpleCookie :: Parser Cookie
+parseSimpleCookie = do
+  name <- stringWithout ([';', ',', '='] <> whitespaceChars) <* string "="
+  value <- stringWithout ([';', ','] <> whitespaceChars)
+
+  pure $ Cookie.new name value
+
 parseCookie :: Parser Cookie
 parseCookie = do
-  name <- stringWithout ([';', ',', '='] <> whitespaceChars) <* string "="
-  value <- stringWithout ([';', ','] <> whitespaceChars) <* dropSeperator
+  cookie <- parseSimpleCookie <* dropSeperator
   attributes <- sepBy parseAttribute (string "; ") <* eof
-  let cookie = foldl (#) (Cookie.new name value) attributes
 
-  pure cookie
+  pure $ foldl (#) cookie attributes
 
--- | Parses a `String` into an `Either ParseError Cookie`.
+parseCookies :: Parser (List Cookie)
+parseCookies = sepBy parseSimpleCookie (string "; ") <* eof
+
+-- | Parses a `String` into an `Either ParseError Cookie`. This
+-- | function is primarily intended to parse the `Set-Cookie`
+-- | header on the client.
 -- |
 -- | ```purescript
 -- | > Parser.parse "key=value; Secure"
@@ -123,3 +135,15 @@ parseCookie = do
 -- | ```
 parse :: String -> Either ParseError Cookie
 parse = runParser parseCookie
+
+-- | Parses a `String` into an `Either ParseError (List Cookie)`.
+-- | HTTP requests can include multiple cookies in a single
+-- | `Cookie` header consisting of only name/value pairs. This
+-- | function can be used to parse this header.
+-- |
+-- | ```purescript
+-- | > parseMany "key1=value1; key2=value2"
+-- | (Right ({ name: "key1", value: "value1", ... } : { name: "key2", value: "value2", ... } : Nil))
+-- | ```
+parseMany :: String -> Either ParseError (List Cookie)
+parseMany = runParser parseCookies

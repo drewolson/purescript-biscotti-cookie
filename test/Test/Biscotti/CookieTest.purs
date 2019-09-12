@@ -10,6 +10,7 @@ import Data.DateTime (DateTime(..), Time(..))
 import Data.DateTime as DateTime
 import Data.Either (Either(..))
 import Data.Enum (toEnum)
+import Data.List as List
 import Data.Maybe (Maybe(..), fromJust)
 import Partial.Unsafe (unsafePartial)
 import Test.QuickCheck ((==?))
@@ -51,3 +52,32 @@ testSuite = do
               }
 
         Cookie.parse "key=val" `shouldEqual` Right expected
+
+    suite "parseMany" do
+      test "parses multiple name/value pairs only" do
+        let expected = List.fromFoldable
+              [ Cookie
+                  { name: "key1"
+                  , value: "val1"
+                  , domain: Nothing
+                  , path: Nothing
+                  , expires: Nothing
+                  , maxAge: Nothing
+                  , sameSite: Nothing
+                  , secure: false
+                  , httpOnly: false
+                  }
+              , Cookie
+                  { name: "key2"
+                  , value: "val2"
+                  , domain: Nothing
+                  , path: Nothing
+                  , expires: Nothing
+                  , maxAge: Nothing
+                  , sameSite: Nothing
+                  , secure: false
+                  , httpOnly: false
+                  }
+              ]
+
+        Cookie.parseMany "key1=val1; key2=val2" `shouldEqual` Right expected
