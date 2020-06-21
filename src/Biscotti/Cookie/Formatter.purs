@@ -40,22 +40,23 @@ sameSiteTag :: String
 sameSiteTag = "SameSite"
 
 expiresFormatter :: Formatter
-expiresFormatter = List.fromFoldable
-  [ DayOfWeekNameShort
-  , Placeholder ", "
-  , DayOfMonthTwoDigits
-  , Placeholder " "
-  , MonthShort
-  , Placeholder " "
-  , YearFull
-  , Placeholder " "
-  , Hours24
-  , Placeholder ":"
-  , MinutesTwoDigits
-  , Placeholder ":"
-  , SecondsTwoDigits
-  , Placeholder " GMT"
-  ]
+expiresFormatter =
+  List.fromFoldable
+    [ DayOfWeekNameShort
+    , Placeholder ", "
+    , DayOfMonthTwoDigits
+    , Placeholder " "
+    , MonthShort
+    , Placeholder " "
+    , YearFull
+    , Placeholder " "
+    , Hours24
+    , Placeholder ":"
+    , MinutesTwoDigits
+    , Placeholder ":"
+    , SecondsTwoDigits
+    , Placeholder " GMT"
+    ]
 
 formatDateTime :: DateTime -> String
 formatDateTime = Formatter.format expiresFormatter

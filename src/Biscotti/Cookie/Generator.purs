@@ -5,7 +5,6 @@ module Biscotti.Cookie.Generator
   ) where
 
 import Prelude
-
 import Biscotti.Cookie.Formatter
   ( domainTag
   , expiresTag
@@ -28,21 +27,25 @@ import Data.Maybe (Maybe(..))
 -- | key=value; Secure
 -- | ```
 stringify :: Cookie -> String
-stringify (Cookie cookie) = intercalate "; " $ catMaybes
-  [ attr cookie.name $ Just cookie.value
-  , attr domainTag cookie.domain
-  , attr pathTag cookie.path
-  , attr expiresTag $ formatDateTime <$> cookie.expires
-  , attr maxAgeTag $ show <$> cookie.maxAge
-  , attr sameSiteTag $ show <$> cookie.sameSite
-  , flag secureTag cookie.secure
-  , flag httpOnlyTag cookie.httpOnly
-  ]
+stringify (Cookie cookie) =
+  intercalate "; "
+    $ catMaybes
+        [ attr cookie.name $ Just cookie.value
+        , attr domainTag cookie.domain
+        , attr pathTag cookie.path
+        , attr expiresTag $ formatDateTime <$> cookie.expires
+        , attr maxAgeTag $ show <$> cookie.maxAge
+        , attr sameSiteTag $ show <$> cookie.sameSite
+        , flag secureTag cookie.secure
+        , flag httpOnlyTag cookie.httpOnly
+        ]
 
 attr :: String -> Maybe String -> Maybe String
-attr _ Nothing = Nothing
-attr name (Just value) = Just $ name <> "=" <> value
+attr name = case _ of
+  Nothing -> Nothing
+  Just value -> Just $ name <> "=" <> value
 
 flag :: String -> Boolean -> Maybe String
-flag _ false = Nothing
-flag name true = Just name
+flag name = case _ of
+  false -> Nothing
+  true -> Just name

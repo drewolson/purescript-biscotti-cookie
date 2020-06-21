@@ -1,5 +1,7 @@
 # purescript-biscotti-cookie
 
+[![Build Status](https://travis-ci.org/drewolson/purescript-biscotti-cookie.svg?branch=master)](https://travis-ci.org/drewolson/purescript-biscotti-cookie)
+
 Documentation is available on
 [Pursuit](https://pursuit.purescript.org/packages/purescript-biscotti-cookie).
 

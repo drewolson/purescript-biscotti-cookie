@@ -31,7 +31,6 @@ module Biscotti.Cookie.Types
   ) where
 
 import Prelude
-
 import Control.Monad.Gen.Common (genMaybe)
 import Data.DateTime (DateTime, modifyTime, setMillisecond)
 import Data.DateTime as DateTime
@@ -67,23 +66,24 @@ derive instance ordSameSite :: Ord SameSite
 instance showSameSite :: Show SameSite where
   show :: SameSite -> String
   show Strict = "Strict"
-  show Lax    = "Lax"
-  show None   = "None"
+  show Lax = "Lax"
+  show None = "None"
 
 instance sameSiteArbitrary :: Arbitrary SameSite where
   arbitrary :: Gen SameSite
-  arbitrary = elements $ Strict :| [Lax, None]
+  arbitrary = elements $ Strict :| [ Lax, None ]
 
 -- | The `Cookie` type
-newtype Cookie = Cookie
-  { name     :: String
-  , value    :: String
-  , domain   :: Maybe String
-  , path     :: Maybe String
-  , expires  :: Maybe DateTime
-  , maxAge   :: Maybe Int
+newtype Cookie
+  = Cookie
+  { name :: String
+  , value :: String
+  , domain :: Maybe String
+  , path :: Maybe String
+  , expires :: Maybe DateTime
+  , maxAge :: Maybe Int
   , sameSite :: Maybe SameSite
-  , secure   :: Boolean
+  , secure :: Boolean
   , httpOnly :: Boolean
   }
 
@@ -107,60 +107,55 @@ instance cookieArbitrary :: Arbitrary Cookie where
     sameSite <- arbitrary
     secure <- arbitrary
     httpOnly <- arbitrary
-
-    pure $ Cookie
-      { name
-      , value
-      , domain
-      , path
-      , expires
-      , maxAge
-      , sameSite
-      , secure
-      , httpOnly
-      }
+    pure
+      $ Cookie
+          { name
+          , value
+          , domain
+          , path
+          , expires
+          , maxAge
+          , sameSite
+          , secure
+          , httpOnly
+          }
     where
-      zeroMillisconds :: DateTime -> DateTime
-      zeroMillisconds dateTime =
-        case toEnum 0 of
-          Just millsecond ->
-            modifyTime (setMillisecond millsecond) dateTime
-          Nothing ->
-            dateTime
+    zeroMillisconds :: DateTime -> DateTime
+    zeroMillisconds dateTime = case toEnum 0 of
+      Just millsecond -> modifyTime (setMillisecond millsecond) dateTime
+      Nothing -> dateTime
 
-      validName :: String -> Boolean
-      validName = not <<< Regex.test $ unsafeRegex """[;,\s=]""" noFlags
+    validName :: String -> Boolean
+    validName = not <<< Regex.test $ unsafeRegex """[;,\s=]""" noFlags
 
-      validValue :: String -> Boolean
-      validValue = not <<< Regex.test $ unsafeRegex """[;,\s]""" noFlags
+    validValue :: String -> Boolean
+    validValue = not <<< Regex.test $ unsafeRegex """[;,\s]""" noFlags
 
 -- | The constructor for `Cookie`
 new :: String -> String -> Cookie
-new name value = Cookie
-  { name
-  , value
-  , domain: Nothing
-  , path: Nothing
-  , expires: Nothing
-  , maxAge: Nothing
-  , sameSite: Nothing
-  , secure: false
-  , httpOnly: false
-  }
+new name value =
+  Cookie
+    { name
+    , value
+    , domain: Nothing
+    , path: Nothing
+    , expires: Nothing
+    , maxAge: Nothing
+    , sameSite: Nothing
+    , secure: false
+    , httpOnly: false
+    }
 
 -- | Expire an existing `Cookie`. This sets the `Expires` attribute of
 -- | the cookie to yesterday's date.
 expire :: Cookie -> Effect (Either String Cookie)
 expire cookie = do
   now <- nowDateTime
-  let maybeDate = DateTime.adjust (Days $ -1.0) now
-
+  let
+    maybeDate = DateTime.adjust (Days $ -1.0) now
   case maybeDate of
-    Nothing ->
-      pure $ Left "Invalid date"
-
-    Just yesterday ->
-      pure $ Right $ setExpires yesterday cookie
+    Nothing -> pure $ Left "Invalid date"
+    Just yesterday -> pure $ Right $ setExpires yesterday cookie
 
 getDomain :: Cookie -> Maybe String
 getDomain = Lens.view _domain
