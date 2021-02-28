@@ -32,6 +32,7 @@ module Biscotti.Cookie.Types
 
 import Prelude
 import Control.Monad.Gen.Common (genMaybe)
+import Data.Array.NonEmpty (fromNonEmpty)
 import Data.DateTime (DateTime, modifyTime, setMillisecond)
 import Data.DateTime as DateTime
 import Data.DateTime.Gen (genDateTime)
@@ -71,7 +72,7 @@ instance showSameSite :: Show SameSite where
 
 instance sameSiteArbitrary :: Arbitrary SameSite where
   arbitrary :: Gen SameSite
-  arbitrary = elements $ Strict :| [ Lax, None ]
+  arbitrary = elements $ fromNonEmpty $ Strict :| [ Lax, None ]
 
 -- | The `Cookie` type
 newtype Cookie
