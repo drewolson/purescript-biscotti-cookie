@@ -31,28 +31,17 @@ module Biscotti.Cookie.Types
   ) where
 
 import Prelude
-import Control.Monad.Gen.Common (genMaybe)
-import Data.Array.NonEmpty (fromNonEmpty)
-import Data.DateTime (DateTime, modifyTime, setMillisecond)
+import Data.DateTime (DateTime)
 import Data.DateTime as DateTime
-import Data.DateTime.Gen (genDateTime)
 import Data.Either (Either(..))
-import Data.Enum (toEnum)
 import Data.Lens (Lens', lens)
 import Data.Lens as Lens
 import Data.Lens.Iso.Newtype (_Newtype)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
-import Data.NonEmpty ((:|))
-import Data.String.Gen (genAsciiString)
-import Data.String.Regex as Regex
-import Data.String.Regex.Flags (noFlags)
-import Data.String.Regex.Unsafe (unsafeRegex)
 import Data.Time.Duration (Days(..))
 import Effect (Effect)
 import Effect.Now (nowDateTime)
-import Test.QuickCheck (class Arbitrary, arbitrary)
-import Test.QuickCheck.Gen (Gen, elements, suchThat)
 
 -- | Type representing a `Cookie`'s optional `SameSite` attribute.
 data SameSite
@@ -69,10 +58,6 @@ instance showSameSite :: Show SameSite where
   show Strict = "Strict"
   show Lax = "Lax"
   show None = "None"
-
-instance sameSiteArbitrary :: Arbitrary SameSite where
-  arbitrary :: Gen SameSite
-  arbitrary = elements $ fromNonEmpty $ Strict :| [ Lax, None ]
 
 -- | The `Cookie` type
 newtype Cookie
@@ -95,42 +80,6 @@ derive newtype instance eqCookie :: Eq Cookie
 derive newtype instance ordCookie :: Ord Cookie
 
 derive newtype instance showCookie :: Show Cookie
-
-instance cookieArbitrary :: Arbitrary Cookie where
-  arbitrary :: Gen Cookie
-  arbitrary = do
-    name <- genAsciiString `suchThat` validName
-    value <- genAsciiString `suchThat` validValue
-    domain <- genMaybe $ pure "https://example.com"
-    path <- genMaybe $ pure "/"
-    expires <- genMaybe $ zeroMillisconds <$> genDateTime
-    maxAge <- arbitrary
-    sameSite <- arbitrary
-    secure <- arbitrary
-    httpOnly <- arbitrary
-    pure
-      $ Cookie
-          { name
-          , value
-          , domain
-          , path
-          , expires
-          , maxAge
-          , sameSite
-          , secure
-          , httpOnly
-          }
-    where
-    zeroMillisconds :: DateTime -> DateTime
-    zeroMillisconds dateTime = case toEnum 0 of
-      Just millsecond -> modifyTime (setMillisecond millsecond) dateTime
-      Nothing -> dateTime
-
-    validName :: String -> Boolean
-    validName = not <<< Regex.test $ unsafeRegex """[;,\s=]""" noFlags
-
-    validValue :: String -> Boolean
-    validValue = not <<< Regex.test $ unsafeRegex """[;,\s]""" noFlags
 
 -- | The constructor for `Cookie`
 new :: String -> String -> Cookie

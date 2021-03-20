@@ -3,27 +3,81 @@ module Test.Biscotti.CookieTest
   ) where
 
 import Prelude
+import Biscotti.Cookie (SameSite(..))
 import Biscotti.Cookie as Cookie
 import Biscotti.Cookie.Types (Cookie(..))
-import Data.DateTime (DateTime(..), Time(..))
+import Control.Monad.Gen (elements, suchThat)
+import Control.Monad.Gen.Common (genMaybe)
+import Data.Array.NonEmpty (fromNonEmpty)
+import Data.DateTime (DateTime(..), Time(..), modifyTime, setMillisecond)
 import Data.DateTime as DateTime
+import Data.DateTime.Gen (genDateTime)
 import Data.Either (Either(..))
 import Data.Enum (toEnum)
 import Data.List as List
 import Data.Maybe (Maybe(..), fromJust)
+import Data.NonEmpty ((:|))
+import Data.String.Gen (genAsciiString)
+import Data.String.Regex as Regex
+import Data.String.Regex.Flags (noFlags)
+import Data.String.Regex.Unsafe (unsafeRegex)
 import Partial.Unsafe (unsafePartial)
-import Test.QuickCheck ((==?))
+import Test.QuickCheck (class Arbitrary, arbitrary, (==?))
+import Test.QuickCheck.Gen (Gen)
 import Test.Unit (TestSuite, suite, test)
 import Test.Unit.Assert (shouldEqual)
 import Test.Unit.QuickCheck (quickCheck)
 import Test.Util.Assert (shouldContainString)
+
+newtype TestCookie
+  = TestCookie Cookie
+
+instance arbitraryTestCookie :: Arbitrary TestCookie where
+  arbitrary :: Gen TestCookie
+  arbitrary = do
+    name <- genAsciiString `suchThat` validName
+    value <- genAsciiString `suchThat` validValue
+    domain <- genMaybe $ pure "https://example.com"
+    path <- genMaybe $ pure "/"
+    expires <- genMaybe $ zeroMillisconds <$> genDateTime
+    maxAge <- arbitrary
+    sameSite <- genMaybe $ genSameSite
+    secure <- arbitrary
+    httpOnly <- arbitrary
+    pure
+      $ TestCookie
+      $ Cookie
+          { name
+          , value
+          , domain
+          , path
+          , expires
+          , maxAge
+          , sameSite
+          , secure
+          , httpOnly
+          }
+    where
+    genSameSite :: Gen SameSite
+    genSameSite = elements $ fromNonEmpty $ Strict :| [ Lax, None ]
+
+    zeroMillisconds :: DateTime -> DateTime
+    zeroMillisconds dateTime = case toEnum 0 of
+      Just millsecond -> modifyTime (setMillisecond millsecond) dateTime
+      Nothing -> dateTime
+
+    validName :: String -> Boolean
+    validName = not <<< Regex.test $ unsafeRegex """[;,\s=]""" noFlags
+
+    validValue :: String -> Boolean
+    validValue = not <<< Regex.test $ unsafeRegex """[;,\s]""" noFlags
 
 testSuite :: TestSuite
 testSuite = do
   suite "Biscotti.Cookie" do
     suite "properties" do
       test "parse and stringify round trip correctly" do
-        quickCheck \cookie -> do
+        quickCheck \(TestCookie cookie) -> do
           let
             new = Cookie.parse $ Cookie.stringify $ cookie
           new ==? Right cookie
