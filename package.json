@@ -12,6 +12,7 @@
     "purescript": "^0.14.0",
     "purescript-language-server": "^0.12.7",
     "purty": "^6.2.0",
-    "spago": "^0.19.1"
+    "spago": "^0.19.1",
+    "ssri": ">=8.0.1"
   }
 }
