@@ -1,6 +1,7 @@
 # purescript-biscotti-cookie
 
-[![Build Status](https://travis-ci.org/drewolson/purescript-biscotti-cookie.svg?branch=master)](https://travis-ci.org/drewolson/purescript-biscotti-cookie)
+[![Build
+Status](https://github.com/drewolson/purescript-biscotti-cookie/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/drewolson/purescript-biscotti-cookie/actions/workflows/test.yml)
 
 Documentation is available on
 [Pursuit](https://pursuit.purescript.org/packages/purescript-biscotti-cookie).

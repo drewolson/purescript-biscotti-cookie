@@ -9,7 +9,9 @@
     "format:check": "find src test -name \"*.purs\" | xargs -n1 purty validate"
   },
   "devDependencies": {
+    "purescript": "^0.14.0",
     "purescript-language-server": "^0.12.7",
-    "purty": "^6.2.0"
+    "purty": "^6.2.0",
+    "spago": "^0.19.1"
   }
 }
