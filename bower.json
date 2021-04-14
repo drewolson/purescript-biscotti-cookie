@@ -29,6 +29,6 @@
         "purescript-record": "^v3.0.0",
         "purescript-string-parsers": "^v6.0.0",
         "purescript-strings": "^v5.0.0",
-        "purescript-test-unit": "^v15.0.0"
+        "purescript-test-unit": "^v16.0.0"
     }
 }
