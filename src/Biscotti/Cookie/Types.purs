@@ -1,6 +1,6 @@
 -- | This module contains the `Cookie` type and functions for operating on data within it.
 module Biscotti.Cookie.Types
-  ( Cookie(..)
+  ( Cookie
   , SameSite(..)
   , _domain
   , _expires
@@ -11,6 +11,7 @@ module Biscotti.Cookie.Types
   , _secure
   , _value
   , expire
+  , fromFields
   , getDomain
   , getExpires
   , getHttpOnly
@@ -34,14 +35,14 @@ import Prelude
 import Data.DateTime (DateTime)
 import Data.DateTime as DateTime
 import Data.Either (Either(..))
-import Data.Lens (Lens', lens)
+import Data.Lens (Iso', Lens', iso)
 import Data.Lens as Lens
-import Data.Lens.Iso.Newtype (_Newtype)
+import Data.Lens.Record (prop)
 import Data.Maybe (Maybe(..))
-import Data.Newtype (class Newtype)
 import Data.Time.Duration (Days(..))
 import Effect (Effect)
 import Effect.Now (nowDateTime)
+import Type.Prelude (Proxy(..))
 
 -- | Type representing a `Cookie`'s optional `SameSite` attribute.
 data SameSite
@@ -59,21 +60,21 @@ instance showSameSite :: Show SameSite where
   show Lax = "Lax"
   show None = "None"
 
+type CookieFields
+  = { name :: String
+    , value :: String
+    , domain :: Maybe String
+    , path :: Maybe String
+    , expires :: Maybe DateTime
+    , maxAge :: Maybe Int
+    , sameSite :: Maybe SameSite
+    , secure :: Boolean
+    , httpOnly :: Boolean
+    }
+
 -- | The `Cookie` type
 newtype Cookie
-  = Cookie
-  { name :: String
-  , value :: String
-  , domain :: Maybe String
-  , path :: Maybe String
-  , expires :: Maybe DateTime
-  , maxAge :: Maybe Int
-  , sameSite :: Maybe SameSite
-  , secure :: Boolean
-  , httpOnly :: Boolean
-  }
-
-derive instance newtypeCookie :: Newtype Cookie _
+  = Cookie CookieFields
 
 derive newtype instance eqCookie :: Eq Cookie
 
@@ -95,6 +96,9 @@ new name value =
     , secure: false
     , httpOnly: false
     }
+
+fromFields :: CookieFields -> Cookie
+fromFields = Cookie
 
 -- | Expire an existing `Cookie`. This sets the `Expires` attribute of
 -- | the cookie to yesterday's date.
@@ -155,29 +159,32 @@ setSameSite = Lens.setJust _sameSite
 setSecure :: Cookie -> Cookie
 setSecure = Lens.set _secure true
 
+_Cookie :: Iso' Cookie CookieFields
+_Cookie = iso (\(Cookie fields) -> fields) Cookie
+
 _domain :: Lens' Cookie (Maybe String)
-_domain = _Newtype <<< (lens _.domain $ _ { domain = _ })
+_domain = _Cookie <<< prop (Proxy :: Proxy "domain")
 
 _expires :: Lens' Cookie (Maybe DateTime)
-_expires = _Newtype <<< (lens _.expires $ _ { expires = _ })
+_expires = _Cookie <<< prop (Proxy :: Proxy "expires")
 
 _httpOnly :: Lens' Cookie Boolean
-_httpOnly = _Newtype <<< (lens _.httpOnly $ _ { httpOnly = _ })
+_httpOnly = _Cookie <<< prop (Proxy :: Proxy "httpOnly")
 
 _maxAge :: Lens' Cookie (Maybe Int)
-_maxAge = _Newtype <<< (lens _.maxAge $ _ { maxAge = _ })
+_maxAge = _Cookie <<< prop (Proxy :: Proxy "maxAge")
 
 _name :: Lens' Cookie String
-_name = _Newtype <<< (lens _.name $ _ { name = _ })
+_name = _Cookie <<< prop (Proxy :: Proxy "name")
 
 _path :: Lens' Cookie (Maybe String)
-_path = _Newtype <<< (lens _.path $ _ { path = _ })
+_path = _Cookie <<< prop (Proxy :: Proxy "path")
 
 _sameSite :: Lens' Cookie (Maybe SameSite)
-_sameSite = _Newtype <<< (lens _.sameSite $ _ { sameSite = _ })
+_sameSite = _Cookie <<< prop (Proxy :: Proxy "sameSite")
 
 _secure :: Lens' Cookie Boolean
-_secure = _Newtype <<< (lens _.secure $ _ { secure = _ })
+_secure = _Cookie <<< prop (Proxy :: Proxy "secure")
 
 _value :: Lens' Cookie String
-_value = _Newtype <<< (lens _.value $ _ { value = _ })
+_value = _Cookie <<< prop (Proxy :: Proxy "value")

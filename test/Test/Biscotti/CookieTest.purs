@@ -3,9 +3,8 @@ module Test.Biscotti.CookieTest
   ) where
 
 import Prelude
-import Biscotti.Cookie (SameSite(..))
+import Biscotti.Cookie (Cookie, SameSite(..))
 import Biscotti.Cookie as Cookie
-import Biscotti.Cookie.Types (Cookie(..))
 import Control.Monad.Gen (elements, suchThat)
 import Control.Monad.Gen.Common (genMaybe)
 import Data.Array.NonEmpty (fromNonEmpty)
@@ -46,7 +45,7 @@ instance arbitraryTestCookie :: Arbitrary TestCookie where
     httpOnly <- arbitrary
     pure
       $ TestCookie
-      $ Cookie
+      $ Cookie.fromFields
           { name
           , value
           , domain
@@ -94,7 +93,7 @@ testSuite = do
       test "parses a simple cookie" do
         let
           expected =
-            Cookie
+            Cookie.fromFields
               { name: "key"
               , value: "val"
               , domain: Nothing
@@ -111,7 +110,7 @@ testSuite = do
         let
           expected =
             List.fromFoldable
-              [ Cookie
+              [ Cookie.fromFields
                   { name: "key1"
                   , value: "val1"
                   , domain: Nothing
@@ -122,7 +121,7 @@ testSuite = do
                   , secure: false
                   , httpOnly: false
                   }
-              , Cookie
+              , Cookie.fromFields
                   { name: "key2"
                   , value: "val2"
                   , domain: Nothing

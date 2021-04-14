@@ -37,6 +37,7 @@ import Biscotti.Cookie.Types
   , _secure
   , _value
   , expire
+  , fromFields
   , getDomain
   , getExpires
   , getHttpOnly
@@ -51,5 +52,6 @@ import Biscotti.Cookie.Types
   , setHttpOnly
   , setMaxAge
   , setPath
+  , setSameSite
   , setSecure
   )

@@ -15,7 +15,18 @@ import Biscotti.Cookie.Formatter
   , sameSiteTag
   , secureTag
   )
-import Biscotti.Cookie.Types (Cookie(..))
+import Biscotti.Cookie.Types
+  ( Cookie
+  , getDomain
+  , getExpires
+  , getHttpOnly
+  , getMaxAge
+  , getName
+  , getPath
+  , getSameSite
+  , getSecure
+  , getValue
+  )
 import Data.Array (catMaybes)
 import Data.Foldable (intercalate)
 import Data.Maybe (Maybe(..))
@@ -27,17 +38,17 @@ import Data.Maybe (Maybe(..))
 -- | key=value; Secure
 -- | ```
 stringify :: Cookie -> String
-stringify (Cookie cookie) =
+stringify cookie =
   intercalate "; "
     $ catMaybes
-        [ attr cookie.name $ Just cookie.value
-        , attr domainTag cookie.domain
-        , attr pathTag cookie.path
-        , attr expiresTag $ formatDateTime <$> cookie.expires
-        , attr maxAgeTag $ show <$> cookie.maxAge
-        , attr sameSiteTag $ show <$> cookie.sameSite
-        , flag secureTag cookie.secure
-        , flag httpOnlyTag cookie.httpOnly
+        [ attr (getName cookie) $ Just (getValue cookie)
+        , attr domainTag $ getDomain cookie
+        , attr pathTag $ getPath cookie
+        , attr expiresTag $ formatDateTime <$> getExpires cookie
+        , attr maxAgeTag $ show <$> getMaxAge cookie
+        , attr sameSiteTag $ show <$> getSameSite cookie
+        , flag secureTag $ getSecure cookie
+        , flag httpOnlyTag $ getHttpOnly cookie
         ]
 
 attr :: String -> Maybe String -> Maybe String
