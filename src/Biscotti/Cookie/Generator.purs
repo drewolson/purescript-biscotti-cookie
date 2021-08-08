@@ -41,15 +41,15 @@ stringify :: Cookie -> String
 stringify cookie =
   intercalate "; "
     $ catMaybes
-        [ attr (getName cookie) $ Just (getValue cookie)
-        , attr domainTag $ getDomain cookie
-        , attr pathTag $ getPath cookie
-        , attr expiresTag $ formatDateTime <$> getExpires cookie
-        , attr maxAgeTag $ show <$> getMaxAge cookie
-        , attr sameSiteTag $ show <$> getSameSite cookie
-        , flag secureTag $ getSecure cookie
-        , flag httpOnlyTag $ getHttpOnly cookie
-        ]
+      [ attr (getName cookie) $ Just (getValue cookie)
+      , attr domainTag $ getDomain cookie
+      , attr pathTag $ getPath cookie
+      , attr expiresTag $ formatDateTime <$> getExpires cookie
+      , attr maxAgeTag $ show <$> getMaxAge cookie
+      , attr sameSiteTag $ show <$> getSameSite cookie
+      , flag secureTag $ getSecure cookie
+      , flag httpOnlyTag $ getHttpOnly cookie
+      ]
 
 attr :: String -> Maybe String -> Maybe String
 attr name = case _ of

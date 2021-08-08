@@ -9,6 +9,6 @@ import Test.Unit (Test)
 import Test.Unit.Assert (assert)
 
 shouldContainString :: String -> String -> Test
-shouldContainString haystack needle = do
+shouldContainString haystack needle =
   assert ("Expected \"" <> haystack <> "\" to contain \"" <> needle <> "\"")
     $ String.contains (Pattern needle) haystack

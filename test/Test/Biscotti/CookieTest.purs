@@ -43,19 +43,18 @@ instance arbitraryTestCookie :: Arbitrary TestCookie where
     sameSite <- genMaybe $ genSameSite
     secure <- arbitrary
     httpOnly <- arbitrary
-    pure
-      $ TestCookie
-      $ Cookie.fromFields
-          { name
-          , value
-          , domain
-          , path
-          , expires
-          , maxAge
-          , sameSite
-          , secure
-          , httpOnly
-          }
+
+    pure $ TestCookie $ Cookie.fromFields
+      { name
+      , value
+      , domain
+      , path
+      , expires
+      , maxAge
+      , sameSite
+      , secure
+      , httpOnly
+      }
     where
     genSameSite :: Gen SameSite
     genSameSite = elements $ fromNonEmpty $ Strict :| [ Lax, None ]
@@ -77,18 +76,18 @@ testSuite = do
     suite "properties" do
       test "parse and stringify round trip correctly" do
         quickCheck \(TestCookie cookie) -> do
-          let
-            new = Cookie.parse $ Cookie.stringify $ cookie
+          let new = Cookie.parse $ Cookie.stringify $ cookie
+
           new ==? Right cookie
+
     suite "stringify" do
       test "produces a correctly-formated expires attribute" do
-        let
-          date = unsafePartial $ fromJust $ DateTime.canonicalDate <$> toEnum 2019 <*> toEnum 12 <*> toEnum 1
-        let
-          time = unsafePartial $ fromJust $ Time <$> toEnum 12 <*> toEnum 1 <*> toEnum 2 <*> toEnum 0
-        let
-          cookieString = Cookie.stringify $ Cookie.setExpires (DateTime date time) $ Cookie.new "foo" "bar"
+        let date = unsafePartial $ fromJust $ DateTime.canonicalDate <$> toEnum 2019 <*> toEnum 12 <*> toEnum 1
+        let time = unsafePartial $ fromJust $ Time <$> toEnum 12 <*> toEnum 1 <*> toEnum 2 <*> toEnum 0
+        let cookieString = Cookie.stringify $ Cookie.setExpires (DateTime date time) $ Cookie.new "foo" "bar"
+
         cookieString `shouldContainString` "Expires=Sun, 01 Dec 2019 12:01:02 GMT"
+
     suite "parse" do
       test "parses a simple cookie" do
         let
@@ -104,7 +103,9 @@ testSuite = do
               , secure: false
               , httpOnly: false
               }
+
         Cookie.parse "key=val" `shouldEqual` Right expected
+
     suite "parseMany" do
       test "parses multiple name/value pairs only" do
         let
@@ -133,4 +134,5 @@ testSuite = do
                   , httpOnly: false
                   }
               ]
+
         Cookie.parseMany "key1=val1; key2=val2" `shouldEqual` Right expected

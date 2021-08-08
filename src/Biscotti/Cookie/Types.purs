@@ -60,21 +60,20 @@ instance showSameSite :: Show SameSite where
   show Lax = "Lax"
   show None = "None"
 
-type CookieFields
-  = { name :: String
-    , value :: String
-    , domain :: Maybe String
-    , path :: Maybe String
-    , expires :: Maybe DateTime
-    , maxAge :: Maybe Int
-    , sameSite :: Maybe SameSite
-    , secure :: Boolean
-    , httpOnly :: Boolean
-    }
+type CookieFields =
+  { name :: String
+  , value :: String
+  , domain :: Maybe String
+  , path :: Maybe String
+  , expires :: Maybe DateTime
+  , maxAge :: Maybe Int
+  , sameSite :: Maybe SameSite
+  , secure :: Boolean
+  , httpOnly :: Boolean
+  }
 
 -- | The `Cookie` type
-newtype Cookie
-  = Cookie CookieFields
+newtype Cookie = Cookie CookieFields
 
 derive newtype instance eqCookie :: Eq Cookie
 
@@ -105,8 +104,8 @@ fromFields = Cookie
 expire :: Cookie -> Effect (Either String Cookie)
 expire cookie = do
   now <- nowDateTime
-  let
-    maybeDate = DateTime.adjust (Days $ -1.0) now
+  let maybeDate = DateTime.adjust (Days $ -1.0) now
+
   case maybeDate of
     Nothing -> pure $ Left "Invalid date"
     Just yesterday -> pure $ Right $ setExpires yesterday cookie
