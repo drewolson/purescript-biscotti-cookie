@@ -28,8 +28,7 @@ import Test.Unit.Assert (shouldEqual)
 import Test.Unit.QuickCheck (quickCheck)
 import Test.Util.Assert (shouldContainString)
 
-newtype TestCookie
-  = TestCookie Cookie
+newtype TestCookie = TestCookie Cookie
 
 instance arbitraryTestCookie :: Arbitrary TestCookie where
   arbitrary :: Gen TestCookie
