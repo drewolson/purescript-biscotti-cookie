@@ -26,9 +26,7 @@ import Data.Int as Int
 import Data.List (List)
 import Data.Maybe (Maybe(..))
 import Data.String as String
-import StringParser (ParseError, Parser, fail, runParser)
-import StringParser (eof, noneOf, string)
-import StringParser (many, sepBy)
+import StringParser (ParseError, Parser, fail, runParser, eof, noneOf, string, many, sepBy)
 
 type Attribute
   = Cookie -> Cookie
